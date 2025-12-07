@@ -212,6 +212,90 @@ Authorization: Bearer YOUR_TOKEN_HERE
 
 For detailed API documentation with request/response examples, see [POSTMAN_GUIDE.md](./POSTMAN_GUIDE.md)
 
+### Deployed API Reference
+
+**Base URL:** `https://shopsmart-api.onrender.com/api`
+
+#### 1. Create (POST)
+
+**Signup (User/Admin)**
+- **Endpoint:** `/auth/signup`
+- **Body (User):**
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123"
+  }
+  ```
+- **Body (Admin):**
+  ```json
+  {
+    "name": "Admin User",
+    "email": "admin@shopsmart.com",
+    "password": "admin123",
+    "role": "ADMIN"
+  }
+  ```
+
+**Create Product (Admin)**
+- **Endpoint:** `/products`
+- **Headers:** `Authorization: Bearer <ADMIN_TOKEN>`
+- **Body:**
+  ```json
+  {
+    "name": "New Product",
+    "description": "Product description",
+    "price": 99.99,
+    "category": "Electronics",
+    "stock": 100,
+    "imageUrl": "https://example.com/image.jpg"
+  }
+  ```
+
+#### 2. Read (GET)
+
+**Get All Products**
+- **Endpoint:** `/products`
+- **Query Params:** `?page=1&limit=10&sort=price,asc`
+
+**Get User Cart**
+- **Endpoint:** `/cart`
+- **Headers:** `Authorization: Bearer <USER_TOKEN>`
+
+#### 3. Update (PUT)
+
+**Update Product (Admin)**
+- **Endpoint:** `/products/:id`
+- **Headers:** `Authorization: Bearer <ADMIN_TOKEN>`
+- **Body:**
+  ```json
+  {
+    "price": 89.99,
+    "stock": 150
+  }
+  ```
+
+**Update Cart Item Quantity**
+- **Endpoint:** `/cart/:id`
+- **Headers:** `Authorization: Bearer <USER_TOKEN>`
+- **Body:**
+  ```json
+  {
+    "quantity": 3
+  }
+  ```
+
+#### 4. Delete (DELETE)
+
+**Delete Product (Admin)**
+- **Endpoint:** `/products/:id`
+- **Headers:** `Authorization: Bearer <ADMIN_TOKEN>`
+
+**Remove Item from Cart**
+- **Endpoint:** `/cart/:id`
+- **Headers:** `Authorization: Bearer <USER_TOKEN>`
+
 ---
 
 ## 🧪 Testing
