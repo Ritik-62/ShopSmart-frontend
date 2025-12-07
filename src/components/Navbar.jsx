@@ -25,8 +25,8 @@ export default function Navbar() {
                         </Link>
                         {user ? (
                             <>
-                                {user.role === 'ADMIN' ? (
-                                    // Admin users only see Admin link
+                                {user.role === 'ADMIN' || user.role === 'SUPERADMIN' ? (
+                                    // Admin and Superadmin users see Admin Dashboard link
                                     <Link to="/admin" className="text-gray-700 hover:text-blue-600">
                                         Admin Dashboard
                                     </Link>

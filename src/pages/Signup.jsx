@@ -6,7 +6,7 @@ export default function Signup() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [roleSelection, setRoleSelection] = useState('USER');
     const [error, setError] = useState('');
     const { signup } = useAuth();
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ export default function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const role = isAdmin ? 'ADMIN' : undefined;
+            const role = roleSelection !== 'USER' ? roleSelection : undefined;
             await signup(name, email, password, role);
             navigate('/');
         } catch (err) {
@@ -69,17 +69,20 @@ export default function Signup() {
                         </div>
                     </div>
 
-                    <div className="flex items-center">
-                        <input
-                            id="admin-checkbox"
-                            type="checkbox"
-                            checked={isAdmin}
-                            onChange={(e) => setIsAdmin(e.target.checked)}
-                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor="admin-checkbox" className="ml-2 block text-sm text-gray-900">
-                            Sign up as Admin
+                    <div>
+                        <label htmlFor="role-select" className="block text-sm font-medium text-gray-700 mb-2">
+                            Account Type
                         </label>
+                        <select
+                            id="role-select"
+                            value={roleSelection}
+                            onChange={(e) => setRoleSelection(e.target.value)}
+                            className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        >
+                            <option value="USER">Regular User</option>
+                            <option value="ADMIN">Admin</option>
+                            <option value="SUPERADMIN">Super Admin</option>
+                        </select>
                     </div>
 
                     <div>

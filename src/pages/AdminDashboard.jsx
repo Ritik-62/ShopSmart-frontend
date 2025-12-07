@@ -27,9 +27,20 @@ export default function AdminDashboard() {
         imageUrl: '',
     });
 
-    // Check if user is admin
+    // Edit Product State
+    const [editingProduct, setEditingProduct] = useState(null);
+    const [editProduct, setEditProduct] = useState({
+        name: '',
+        description: '',
+        price: '',
+        category: '',
+        stock: '',
+        imageUrl: '',
+    });
+
+    // Check if user is admin or superadmin
     useEffect(() => {
-        if (user && user.role !== 'ADMIN') {
+        if (user && user.role !== 'ADMIN' && user.role !== 'SUPERADMIN') {
             navigate('/');
         }
     }, [user, navigate]);
@@ -97,6 +108,43 @@ export default function AdminDashboard() {
         } catch (error) {
             console.error('Error deleting product:', error);
             alert('Failed to delete product: ' + (error.message || 'Unknown error'));
+        }
+    };
+
+    const handleEditProduct = (product) => {
+        setEditingProduct(product.id);
+        setEditProduct({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            category: product.category,
+            stock: product.stock,
+            imageUrl: product.imageUrl || '',
+        });
+    };
+
+    const handleUpdateProduct = async (e) => {
+        e.preventDefault();
+        try {
+            await api.put(`/products/${editingProduct}`, {
+                ...editProduct,
+                price: parseFloat(editProduct.price),
+                stock: parseInt(editProduct.stock),
+            });
+            alert('Product updated successfully!');
+            setEditingProduct(null);
+            setEditProduct({
+                name: '',
+                description: '',
+                price: '',
+                category: '',
+                stock: '',
+                imageUrl: '',
+            });
+            fetchData();
+        } catch (error) {
+            console.error('Error updating product:', error);
+            alert('Failed to update product: ' + (error.message || 'Unknown error'));
         }
     };
 
@@ -394,7 +442,13 @@ export default function AdminDashboard() {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {product.stock}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                    <button
+                                                        onClick={() => handleEditProduct(product)}
+                                                        className="text-blue-600 hover:text-blue-900"
+                                                    >
+                                                        Edit
+                                                    </button>
                                                     <button
                                                         onClick={() => handleDeleteProduct(product.id)}
                                                         className="text-red-600 hover:text-red-900"
@@ -409,6 +463,94 @@ export default function AdminDashboard() {
                             </div>
                         )}
                     </div>
+
+                    {/* Edit Product Modal */}
+                    {editingProduct && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                                <h2 className="text-2xl font-semibold mb-4">Edit Product</h2>
+                                <form onSubmit={handleUpdateProduct} className="space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input
+                                            type="text"
+                                            placeholder="Product Name"
+                                            value={editProduct.name}
+                                            onChange={(e) =>
+                                                setEditProduct({ ...editProduct, name: e.target.value })
+                                            }
+                                            className="border rounded px-3 py-2"
+                                            required
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Category"
+                                            value={editProduct.category}
+                                            onChange={(e) =>
+                                                setEditProduct({ ...editProduct, category: e.target.value })
+                                            }
+                                            className="border rounded px-3 py-2"
+                                            required
+                                        />
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="Price"
+                                            value={editProduct.price}
+                                            onChange={(e) =>
+                                                setEditProduct({ ...editProduct, price: e.target.value })
+                                            }
+                                            className="border rounded px-3 py-2"
+                                            required
+                                        />
+                                        <input
+                                            type="number"
+                                            placeholder="Stock"
+                                            value={editProduct.stock}
+                                            onChange={(e) =>
+                                                setEditProduct({ ...editProduct, stock: e.target.value })
+                                            }
+                                            className="border rounded px-3 py-2"
+                                            required
+                                        />
+                                    </div>
+                                    <input
+                                        type="url"
+                                        placeholder="Image URL"
+                                        value={editProduct.imageUrl}
+                                        onChange={(e) =>
+                                            setEditProduct({ ...editProduct, imageUrl: e.target.value })
+                                        }
+                                        className="w-full border rounded px-3 py-2"
+                                    />
+                                    <textarea
+                                        placeholder="Description"
+                                        value={editProduct.description}
+                                        onChange={(e) =>
+                                            setEditProduct({ ...editProduct, description: e.target.value })
+                                        }
+                                        className="w-full border rounded px-3 py-2"
+                                        rows="3"
+                                        required
+                                    />
+                                    <div className="flex space-x-4">
+                                        <button
+                                            type="submit"
+                                            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+                                        >
+                                            Update Product
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setEditingProduct(null)}
+                                            className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
