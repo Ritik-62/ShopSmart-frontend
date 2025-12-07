@@ -25,13 +25,15 @@ export default function Navbar() {
                         </Link>
                         {user ? (
                             <>
-                                {user.role === 'ADMIN' || user.role === 'SUPERADMIN' ? (
-                                    // Admin and Superadmin users see Admin Dashboard link
+                                {user.role === 'SUPERADMIN' ? (
+                                    <Link to="/superadmin" className="text-gray-700 hover:text-blue-600">
+                                        User Management
+                                    </Link>
+                                ) : user.role === 'ADMIN' ? (
                                     <Link to="/admin" className="text-gray-700 hover:text-blue-600">
                                         Admin Dashboard
                                     </Link>
                                 ) : (
-                                    // Regular users see Cart and My Orders
                                     <>
                                         <Link to="/cart" className="text-gray-700 hover:text-blue-600">
                                             Cart
@@ -67,3 +69,4 @@ export default function Navbar() {
         </nav>
     );
 }
+
